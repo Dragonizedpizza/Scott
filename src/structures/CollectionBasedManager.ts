@@ -7,14 +7,24 @@ import { ScottClient } from "./ScottClient";
  */
 
 export class CollectionBasedManager extends Collection<string, unknown> {
+  client: ScottClient;
+
+  constructor({
+    client,
+    data,
+  }: {
     client: ScottClient;
+    data: Iterable<[string, unknown]>;
+  }) {
+    super(data);
 
-    constructor({ client, data }: { client: ScottClient; data: Iterable<[string, unknown]> }) {
-        super(data);
-
-        this.client = client;
-    }
-    async asyncForEach(fn: (key: string, value: unknown) => Promise<unknown>, thisArg?: unknown): Promise<void> {
-        for await (const [key, value] of this.entries()) await fn.call(thisArg ?? this, key, value);
-    }
-};
+    this.client = client;
+  }
+  async asyncForEach(
+    fn: (key: string, value: unknown) => Promise<unknown>,
+    thisArg?: unknown
+  ): Promise<void> {
+    for await (const [key, value] of this.entries())
+      await fn.call(thisArg ?? this, key, value);
+  }
+}
